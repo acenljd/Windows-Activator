@@ -4,10 +4,22 @@ $tempFile = "$env:TEMP\Microsoft Activation Scripts.exe"
 Invoke-WebRequest -Uri $url -OutFile $tempFile
 Unblock-File -Path $tempFile
 
-# Метод 1: Използване на COM обект Shell.Application
-$shell = New-Object -ComObject Shell.Application
-$shell.ShellExecute($tempFile, "", $env:TEMP, "runas", 0)
+# Създаване на PS1 скрипт, който ще се изпълни от SYSTEM
+$psScript = @"
+Start-Process -FilePath '$tempFile' -WorkingDirectory '$env:TEMP' -Wait
+"@
 
-# Или метод 2: Директно чрез WMI
-$processClass = [WMICLASS]"root\cimv2:Win32_Process"
-$processClass.Create("`"$tempFile`"", $env:TEMP, $null) | Out-Null
+$psScriptFile = "$env:TEMP\run_as_system.ps1"
+Set-Content -Path $psScriptFile -Value $psScript
+
+# Използване на PsExec от Sysinternals (трябва да го имате)
+# psexec.exe -s -i powershell.exe -ExecutionPolicy Bypass -File `"$psScriptFile`"
+
+# Или алтернативно с schtasks
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File `"$psScriptFile`""
+$trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddSeconds(2)
+$principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+Register-ScheduledTask -TaskName "RunMASElevated" -Action $action -Trigger $trigger -Principal $principal -Force
+Start-ScheduledTask -TaskName "RunMASElevated"
+Start-Sleep -Seconds 10
+Unregister-ScheduledTask -TaskName "RunMASElevated" -Confirm:$false
