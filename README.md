@@ -12,6 +12,8 @@ For Windows 8, 10, 11: 📌
 Copy and Paste: irm https://dub.sh/Windows-Activator | iex
 -----------------------------------------------
 Screenshots
+<img width="1107" height="434" alt="{280E2A5C-A399-4DC3-84E9-F212DF8E4119}" src="https://github.com/user-attachments/assets/5f05812f-1d8f-4288-8646-b54285259579" />
+
 <img width="648" height="614" alt="image" src="https://github.com/user-attachments/assets/47bc4840-7860-49cf-b73f-538640f40589" />
 <img width="920" height="614" alt="image" src="https://github.com/user-attachments/assets/5c0ac9e4-f80b-42db-b119-ddada1ab4fdd" />
 <img width="1160" height="582" alt="image" src="https://github.com/user-attachments/assets/05267451-5808-43fd-bdaf-e5852aa3a155" />
